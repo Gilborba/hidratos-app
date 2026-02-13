@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<hr style="margin:20px 0;">
+
+<h3 style="text-align:center;">ðŸ”’ VersÃ£o Pro</h3>
+
+<p style="font-size:0.9rem;">
+A VersÃ£o Pro libera recursos avanÃ§ados para uso profissional da
+correlaÃ§Ã£o de formaÃ§Ã£o de hidratos.
+</p>
+<hr>
+
+<h3>Aviso Técnico e Limitação de Responsabilidade</h3>
+
+<p class="disclaimer-completo">
+Este aplicativo fornece estimativas de formação de hidratos baseadas em
+correlações empíricas e dados de domínio limitado.
+</p>
+
+<p class="disclaimer-completo">
+Os resultados destinam-se exclusivamente a avaliações preliminares,
+estudos conceituais e apoio à tomada de decisão em nível de triagem técnica.
+</p>
+
+<p class="disclaimer-completo">
+Este aplicativo <strong>não substitui</strong> simulações termo-hidráulicas
+detalhadas, critérios de projeto, normas técnicas aplicáveis ou avaliação
+por engenheiro legalmente habilitado.
+</p>
+
+<p class="disclaimer-completo">
+O desenvolvedor não se responsabiliza por decisões operacionais, de projeto
+ou de segurança tomadas com base exclusiva nos resultados aqui apresentados.
+</p>
+<input
+  type="text"
+  id="codigoPro"
+  placeholder="CÃ³digo de ativaÃ§Ã£o">
+
+<button onclick="ativarPro()">Ativar VersÃ£o Pro</button>
+<title>CorrelaÃ§Ã£o Temperatura Ã— Profundidade</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+.disclaimer-completo {
+  font-size: 0.8rem;
+  color: #444;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  padding: 10px;
+  margin: 0;
+}
+.disclaimer-curto {
+  margin-top: 12px;
+  font-size: 0.75rem;
+  color: #555;
+  line-height: 1.3;
+}
+.container {
+  max-width: 600px;
+  width: 100%;
+  background: #e3f2fd;
+  padding: 16px;
+  border-radius: 8px;
+  margin: auto;
+}
+
+h2 {
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.95rem;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  margin-top: 4px;
+}
+
+button {
+  margin-top: 18px;
+  padding: 12px;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.resultado {
+  margin-top: 16px;
+  font-weight: bold;
+  font-size: 1.05rem;
+}
+
+.erro {
+  color: #b71c1c;
+}
+
+/* Ajustes para telas pequenas */
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1rem;
+  }
+
+  input, button {
+    font-size: 0.95rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>
+    CorrelaÃ§Ã£o Temperatura Ã— Profundidade<br>
+    FormaÃ§Ã£o de Hidratos
+  </h2>
+
+  <label>
+    Temperatura (Â°C)<br>
+    <small>(entre -3,5 e 23 | aceita negativo e decimal)</small>
+  </label>
+  <input 
+    type="text"
+    id="temperatura"
+    inputmode="text"
+    placeholder="-2.5">
+
+  <label>
+    Profundidade (m)<br>
+    <small>(entre 51 e 3251 | sem decimais)</small>
+  </label>
+  <input 
+    type="number"
+    id="profundidade"
+    step="1"
+    min="0"
+    inputmode="numeric"
+    placeholder="1200">
+
+  <button onclick="calcular()">Calcular</button>
+
+  <div id="resultado" class="resultado"></div>
+<div class="disclaimer-curto">
+  <strong>Aviso técnico:</strong>
+  Resultados obtidos por correlação empírica, destinados apenas a análises
+  preliminares e apoio à decisão. Não substituem simulações detalhadas,
+  critérios de projeto ou avaliação por profissional habilitado.
+</div>  
+</div>
+
+<script>
+// ===== CONTROLE DA VERSÃƒO PRO =====
+function ativarPro() {
+  const codigo = document.getElementById("codigoPro").value.trim().toUpperCase();
+
+  const codigosValidos = [
+    "HIDRATO147",
+    "FLOWPRO2026",
+    "HIDRATO-PRO"
+  ];
+
+  if (codigosValidos.includes(codigo)) {
+    localStorage.setItem("versaoPro", "true");
+    alert("VersÃ£o Pro ativada com sucesso.");
+    location.reload();
+  } else {
+    alert("CÃ³digo invÃ¡lido. Verifique e tente novamente.");
+  }
+}
+
+const proAtivo = localStorage.getItem("versaoPro") === "true";
+// Dados da correlaÃ§Ã£o (P em km)
+const dados = [
+  {T:-3.5, P:0.051}, {T:-2, P:0.066}, {T:-1, P:0.076},
+  {T:0, P:0.086}, {T:1, P:0.098}, {T:2, P:0.111},
+  {T:3, P:0.126}, {T:4, P:0.143}, {T:5, P:0.163},
+  {T:6, P:0.184}, {T:7, P:0.209}, {T:8, P:0.237},
+  {T:9, P:0.270}, {T:10, P:0.308}, {T:11, P:0.353},
+  {T:12, P:0.407}, {T:13, P:0.472}, {T:14, P:0.553},
+  {T:15, P:0.660}, {T:16, P:0.808}, {T:17, P:1.009},
+  {T:18, P:1.262}, {T:19, P:1.565}, {T:20, P:1.916},
+  {T:21, P:2.314}, {T:22, P:2.760}, {T:23, P:3.251}
+];
+
+const Tmin = dados[0].T;
+const Tmax = dados[dados.length - 1].T;
+const Pmin = dados[0].P;
+const Pmax = dados[dados.length - 1].P;
+
+function interpolar(x, x1, y1, x2, y2) {
+  return y1 + (x - x1) * (y2 - y1) / (x2 - x1);
+}
+
+function calcular() {
+  const T = document.getElementById("temperatura").value;
+  const Pm = document.getElementById("profundidade").value;
+  const res = document.getElementById("resultado");
+
+  res.className = "resultado";
+
+  if (!T && !Pm) {
+    res.className += " erro";
+    res.innerHTML = "Informe temperatura OU profundidade.";
+    return;
+  }
+
+  if (T && Pm) {
+    res.className += " erro";
+    res.innerHTML = "Informe apenas UMA variÃ¡vel por vez.";
+    return;
+  }
+
+  // Temperatura â†’ Profundidade
+  if (T) {
+    const Tval = parseFloat(T);
+    if (Tval < Tmin || Tval > Tmax) {
+      res.className += " erro";
+      res.innerHTML = "Temperatura fora do domÃ­nio da correlaÃ§Ã£o.";
+      return;
+    }
+
+    for (let i = 0; i < dados.length - 1; i++) {
+      if (Tval >= dados[i].T && Tval <= dados[i + 1].T) {
+        const Pkm = interpolar(Tval, dados[i].T, dados[i].P, dados[i+1].T, dados[i+1].P);
+        res.innerHTML = `Profundidade â‰ˆ ${(Pkm * 1000).toFixed(0)} m`;
+        return;
+      }
+    }
+  }
+
+  // Profundidade â†’ Temperatura
+  // Profundidade â†’ Temperatura (RECURSO PRO)
+if (Pm) {
+
+  if (!proAtivo) {
+    res.className += " erro";
+    res.innerHTML = "CÃ¡lculo Profundidade â†’ Temperatura disponÃ­vel apenas na VersÃ£o Pro.";
+    return;
+  }
+
+    for (let i = 0; i < dados.length - 1; i++) {
+      if (P >= dados[i].P && P <= dados[i + 1].P) {
+        const Tcalc = interpolar(P, dados[i].P, dados[i].T, dados[i+1].P, dados[i+1].T);
+        res.innerHTML = `Temperatura â‰ˆ ${Tcalc.toFixed(2)} Â°C`;
+        return;
+      }
+    }
+  }
+}
+</script>
+
+</body>
+</html>
